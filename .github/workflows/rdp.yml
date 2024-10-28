@@ -1,0 +1,36 @@
+name: Free RDP 3 Hours
+
+on:
+  workflow_dispatch:  # You can manually trigger this workflow.
+  schedule:
+    - cron: '*/3 * * * *'  # Every 3 hours
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up RDP environment
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install xfce4 xfce4-goodies xrdp -y
+          sudo systemctl enable xrdp
+          sudo adduser rdpuser --gecos "" --disabled-password
+          echo "rizki:130310" | sudo chpasswd
+          sudo usermod -aG sudo rdpuser
+          sudo service xrdp restart
+
+      - name: Show Connection Information
+        run: |
+          echo "==============================="
+          echo "RDP Server is Ready!"
+          echo "==============================="
+          echo "Username: rizki"
+          echo "Password: 130310"
+          echo "==============================="
+          echo "Note: Copy the IP address of the runner displayed below."
+          echo "Use IP address with RD Client as 'hostname'."
+          echo "==============================="
+
+      - name: Display IP Address
+        run: |
+          curl -s https://api64.ipify.org
